@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=M+PLUS+Rounded+1c&family=Zen+Maru+Gothic&display=swap">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跟隨滑鼠的小角色</title>
+    <style>
+        body{
+            margin: 0;
+            height: 100vh;
+            overflow: hidden; /*防止出現滾動條*/
+            background-color:rgb(183, 235, 244); 
+            /*讓滑鼠游標變成手指,提示使用者可以點擊*/
+            cursor: pointer;
+            position: relative;
+        }
+
+        /*提示文字*/
+        .instruction{
+            position: absolute;
+            top:20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color:rgb(65, 30, 4);
+            font-family: 'Huninn';
+            font-weight: bold;
+            pointer-events: none; /*讓點擊事件可以穿透文字,不影響點擊背景*/
+        }
+
+        /*這是小角色*/
+        #character{
+            position: absolute;
+            object-fit: cover;
+            width: 150px;
+            height: 150px;
+            line-height:  20px;
+            text-align: center;
+            transform: translate(-50%, -50%);
+
+            /*初始位置在畫面正中間*/
+            left: calc(50vw - 30px);
+            top: calc(50vh - 30px);
+
+            /*key:設定平滑移動的動畫效果(0.8秒完成移動)*/
+            transition: left 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                        top 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none; /*避免角色擋住點擊*/
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="instruction">✸ 點擊任意位置,自嘲熊就會去找你!<br>(p.s.他是有邊界感的寶寶)</div>
+    <img id="character" src="下載 (1).png" alt="小角色">
+
+    <script>
+        const character= document.getElementById('character');
+
+        document.addEventListener('click', (event)=>{
+            const mouseX= event.clientX;
+            const mouseY= event.clientY;
+
+            //character.style.left = '0px';
+            //character.style.top = '0px';
+            // 這裡會自動抓取在 CSS 設定的圖片寬高
+            const charWidth= character.offsetWidth;
+            const charHeight=character.offsetHeight;
+
+            //計算置中的新座標
+            const targetX = mouseX - (charWidth / 3);
+            const targetY = mouseY - (charHeight / 3);
+
+            //character.style.transform = `translate(${mouseX - 30}px, ${mouseY - 30}px)`;
+            character.style.left = `${targetX}px`;
+            character.style.top = `${targetY}px`;
+
+        })
+    </script>
+</body>
+
+</html>
