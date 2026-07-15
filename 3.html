@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh">
+    
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=M+PLUS+Rounded+1c&family=Zen+Maru+Gothic&display=swap">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>要不要和我出去玩?</title>
+    
+
+<style>
+    *{
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body{
+        font-family: Huninn, sans-serif;
+        background-color: rgb(253, 220, 246);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .card{
+        background-color: rgb(203, 254, 254);
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 450px;
+        width: 90%; /* 寬度自適應，讓手機和電腦看都完美 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    h1{
+        color: #640a2c;
+        font-size: 1.8rem;
+        transition: all 0.3s ease;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 修正 1：拔掉狗狗背景與陰影，讓牠融入卡片 */
+    .dog_img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 15px;
+        background: transparent; /* 背景透明 */
+        box-shadow: none;        /* 拔掉雙重陰影 */
+        transition: transform 0.3s ease;
+    }
+
+    .btn-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        min-height: 100px;
+        position: relative;
+    }
+
+    button{
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    /* 修正 2：確保按鈕能正常並排顯示 */
+    #btn-yes{
+        background-color: azure;
+        color: rgb(54, 12, 7);
+        transition: transform 0.2s ease;
+        z-index: 10; /* 確保放大時在最上層 */
+    }
+
+    #btn-no {
+        background-color: #bdbdbd;
+        color: #424242;
+        transition: transform 0.2s ease;
+    }
+
+    #btn-no:hover{
+        background-color: #aeaeae;
+    }
+
+    /* 成功畫面隱藏文字 */
+    #success-text{
+        font-size: 2rem;
+        color: #640a2c;
+        font-weight: bold;
+        display: none;
+        animation: heartBeat 1.2s infinite;
+    }
+
+    @keyframes heartBeat {
+        0%{transform: scale(1);}
+        14%{transform: scale(1.1);}
+        28%{transform: scale(1);}
+        42%{transform: scale(1.1);}
+        70%{transform: scale(1);}
+    }
+</style>
+</head>
+
+<body>
+    <div class="card">
+        <h1 id="title">要不要和我出去玩?</h1>    
+        <h1 id="success-text">嘿嘿太棒了!愛你(✿＞_<)</h1>
+
+        <img id="dog_img" class="dog_img" src="asked_dog.png" alt="cutie puppy">
+        
+        <div class="btn-container" id="btn-container">
+            <button id="btn-yes">當然好呀</button>
+            <button id="btn-no">我不要!</button>
+        </div>
+    </div>
+
+<script>
+    // 修正 3：JS 抓取 ID 的拼字錯誤，確保按鈕事件能被觸發
+    const title = document.getElementById('title');
+    const successText = document.getElementById('success-text'); // 修正：success
+    const dogImg = document.getElementById('dog_img');           // 修正：底線 _
+    const btnContainer = document.getElementById('btn-container');
+    const btnYes = document.getElementById('btn-yes');
+    const btnNo = document.getElementById('btn-no');
+
+    let clickNoCount = 0;
+    let yesScale = 1;
+    let noScale = 1;
+
+    //點擊[當然好呀]
+    btnYes.addEventListener('click', ()=>{
+        title.style.display = 'none';
+        btnContainer.style.display = 'none';
+        successText.style.display = 'block';
+        dogImg.src = 'happy_dog.png'; // 換成最後一張開心狗勾
+        dogImg.style.transform = 'scale(1.1)';
+    });
+
+    //點擊[我不要!]
+    btnNo.addEventListener('click', ()=>{
+        clickNoCount++;
+
+        //1.修改標題
+        title.textContent = '真的不想嗎(T_T)';
+        
+        //2.修改圖片
+        if(clickNoCount === 1){
+            dogImg.src = 'confused_dog.png'; // 第一次點擊：換第二張
+        } else {
+            dogImg.src = 'sad_dog.png';      // 之後點擊：第三張難過
+        }
+        
+        //3.按鈕比例調整
+        yesScale += 0.3; // 越變越大
+        noScale -= 0.15; // 越變越小
+
+        btnYes.style.transform = `scale(${yesScale})`;
+        
+        if(noScale <= 0.1){
+            //如果按鈕小到一定程度，直接隱藏消失
+            btnNo.style.display = 'none';
+        } else {
+            btnNo.style.transform = `scale(${noScale})`;
+        }
+
+        //4.按鈕隨機偏移亂動
+        //將定位改為 fixed，這樣按鈕就可以漂浮在視窗的任一角落
+        btnNo.style.position = 'fixed';
+
+        //計算隨機位置
+        const padding = 100;
+        const randomX = Math.floor(Math.random() * (window.innerWidth - padding * 2)) + padding;
+        const randomY = Math.floor(Math.random() * (window.innerHeight - padding * 2)) + padding;
+
+        btnNo.style.left = randomX + 'px';
+        btnNo.style.top = randomY + 'px';
+    });
+</script>
+</body>
+</html>
